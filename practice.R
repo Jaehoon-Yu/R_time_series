@@ -1,3 +1,6 @@
+# Run from the project root. Keep this explicit loop for learning.
+source("R/find_split.R")
+
 before <- c(19, 20, 21, 20)
 after <- c(24, 25, 26, 25)
 
@@ -16,9 +19,10 @@ print(difference1)
 x <- c(before, after)
 print(x)
 
-gaps <- numeric(7)
+n <- length(x)
+gaps <- numeric(n - 1L)
 
-for (k in 1:7) {
+for (k in seq_len(n - 1L)) {
   # Commands to repeat
   left <- x[1:k]
   right <- x[(k + 1):length(x)]
@@ -34,5 +38,8 @@ for (k in 1:7) {
 
 print(gaps)
 
-best_k <- which.max(abs(gaps))
+best_k <- find_split(x)
 print(best_k)
+
+# The reusable function must agree with the step-by-step calculation.
+stopifnot(isTRUE(all.equal(gaps, split_gaps(x)$gap)))
