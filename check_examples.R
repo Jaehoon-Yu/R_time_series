@@ -32,3 +32,10 @@ print(changed)
 print(c(original = find_split(examples$downward),
         changed = find_split(changed)))
 # 처음에는 4, 바꾼 뒤에는 3이 나옴. 낮아지는 시작점이 한 칸 앞당겨졌음.
+
+# 바꾼 예제를 3번째, 4번째 숫자 뒤에서 나눠 직접 비교함.
+gap3 <- mean(changed[4:8]) - mean(changed[1:3])
+gap4 <- mean(changed[5:8]) - mean(changed[1:4])
+print(c(after3 = gap3, after4 = gap4))
+# 차이는 각각 -5, -3.75임. 부호를 빼고 크기를 비교하면 5가 더 큼.
+print(c(after3 = abs(gap3), after4 = abs(gap4)))
