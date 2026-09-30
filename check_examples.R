@@ -24,3 +24,11 @@ print(c(left_mean = mean(left), right_mean = mean(right),
 
 # 숫자가 흔들리기만 해도 차이가 큰 위치는 나올 수 있음.
 print(split_gaps(examples$fluctuating), row.names = FALSE)
+
+# 같은 예제에서 네 번째 숫자만 25에서 20으로 바꿔봄.
+changed <- examples$downward
+changed[4] <- 20
+print(changed)
+print(c(original = find_split(examples$downward),
+        changed = find_split(changed)))
+# 처음에는 4, 바꾼 뒤에는 3이 나옴. 낮아지는 시작점이 한 칸 앞당겨졌음.
