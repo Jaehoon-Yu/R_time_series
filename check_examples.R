@@ -45,3 +45,13 @@ comparison <- split_gaps(changed)
 # abs_gap은 평균 차이에서 부호를 뺀 크기임.
 comparison$abs_gap <- abs(comparison$gap)
 print(comparison, row.names = FALSE)
+
+# k가 3, 4인 줄에서 차이를 꺼내 직접 계산한 값과 나란히 놓음.
+gap_check <- data.frame(
+  k = c(3, 4),
+  direct = c(gap3, gap4),
+  from_table = c(comparison$gap[comparison$k == 3],
+                 comparison$gap[comparison$k == 4])
+)
+# direct는 직접 계산한 값, from_table은 표에서 찾은 값임.
+print(gap_check, row.names = FALSE)
