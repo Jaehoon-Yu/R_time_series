@@ -39,3 +39,9 @@ gap4 <- mean(changed[5:8]) - mean(changed[1:4])
 print(c(after3 = gap3, after4 = gap4))
 # 차이는 각각 -5, -3.75임. 부호를 빼고 크기를 비교하면 5가 더 큼.
 print(c(after3 = abs(gap3), after4 = abs(gap4)))
+
+# 같은 숫자들을 나눌 수 있는 모든 위치에서 비교함.
+comparison <- split_gaps(changed)
+# abs_gap은 평균 차이에서 부호를 뺀 크기임.
+comparison$abs_gap <- abs(comparison$gap)
+print(comparison, row.names = FALSE)
