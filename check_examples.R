@@ -62,3 +62,9 @@ best_row <- which.max(comparison$abs_gap)
 best_split <- comparison[best_row, ]
 print(best_split, row.names = FALSE)
 # k가 3이므로 세 번째 숫자 다음에서 나눈다는 뜻임.
+
+# 표에서 고른 위치와 기존 함수가 찾은 위치를 나란히 비교함.
+split_check <- c(from_table = best_split$k,
+                 from_function = find_split(changed))
+print(split_check)
+# 이 예제에서는 두 값 모두 3이 나옴.
