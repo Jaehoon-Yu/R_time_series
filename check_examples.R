@@ -55,3 +55,10 @@ gap_check <- data.frame(
 )
 # direct는 직접 계산한 값, from_table은 표에서 찾은 값임.
 print(gap_check, row.names = FALSE)
+
+# 이 예제의 표에서 차이의 크기가 가장 큰 줄을 고름.
+# which.max는 가장 큰 값이 있는 줄 번호를 알려줌.
+best_row <- which.max(comparison$abs_gap)
+best_split <- comparison[best_row, ]
+print(best_split, row.names = FALSE)
+# k가 3이므로 세 번째 숫자 다음에서 나눈다는 뜻임.
