@@ -76,14 +76,18 @@ one_large[8] <- 60
 # 같은 위치의 값만 25로 낮춰서 비교함. 나머지 일곱 숫자는 그대로임.
 smaller_last <- one_large
 smaller_last[8] <- 25
+# 25와 60 사이에서 30도 살펴봄. 같은 마지막 숫자만 바꿈.
+last_30 <- smaller_last
+last_30[8] <- 30
 large_comparison <- data.frame(
-  last_value = c(examples$downward[8], smaller_last[8], one_large[8]),
-  mean = c(mean(examples$downward), mean(smaller_last), mean(one_large)),
+  last_value = c(examples$downward[8], smaller_last[8], last_30[8], one_large[8]),
+  mean = c(mean(examples$downward), mean(smaller_last), mean(last_30),
+           mean(one_large)),
   split_after = c(find_split(examples$downward), find_split(smaller_last),
-                  find_split(one_large))
+                  find_split(last_30), find_split(one_large))
 )
 print(large_comparison, row.names = FALSE)
 # last_value는 마지막 숫자임. 20인 줄이 원래 예제임.
 # mean은 전체 평균, split_after는 몇 번째 숫자 다음에서 나누는지 뜻함.
-# 25에서는 평균만 올라가고 위치는 4임. 60에서는 위치도 7로 바뀜.
+# 25에서는 위치가 4임. 30과 60에서는 위치가 7로 바뀜.
 # 숫자 하나로 위치가 바뀔 수 있으므로, 전체 흐름이 바뀌었다고 단정하지 않음.
