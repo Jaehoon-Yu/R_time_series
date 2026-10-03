@@ -68,3 +68,16 @@ split_check <- c(from_table = best_split$k,
                  from_function = find_split(changed))
 print(split_check)
 # 이 예제에서는 두 값 모두 3이 나옴.
+
+# 마지막 숫자 하나만 커지면 평균과 고르는 위치도 달라질지 비교함.
+# 평균은 올라갈 것으로 예상함. 고르는 위치는 계산해서 확인함.
+one_large <- examples$downward
+one_large[8] <- 60
+large_comparison <- data.frame(
+  example = c("original", "one_large"),
+  mean = c(mean(examples$downward), mean(one_large)),
+  split_after = c(find_split(examples$downward), find_split(one_large))
+)
+print(large_comparison, row.names = FALSE)
+# mean은 전체 평균, split_after는 몇 번째 숫자 다음에서 나누는지 뜻함.
+# 숫자 하나로 위치가 바뀔 수 있으므로, 전체 흐름이 바뀌었다고 단정하지 않음.
