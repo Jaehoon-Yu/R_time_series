@@ -71,23 +71,22 @@ print(split_check)
 
 # 마지막 숫자 하나만 커지면 평균과 고르는 위치도 달라질지 비교함.
 # 평균은 올라갈 것으로 예상함. 고르는 위치는 계산해서 확인함.
-one_large <- examples$downward
-one_large[8] <- 60
-# 같은 위치의 값만 25로 낮춰서 비교함. 나머지 일곱 숫자는 그대로임.
-smaller_last <- one_large
-smaller_last[8] <- 25
-# 25와 60 사이에서 30도 살펴봄. 같은 마지막 숫자만 바꿈.
-last_30 <- smaller_last
-last_30[8] <- 30
+last_values <- c(20, 25, 26, 30, 60)
 large_comparison <- data.frame(
-  last_value = c(examples$downward[8], smaller_last[8], last_30[8], one_large[8]),
-  mean = c(mean(examples$downward), mean(smaller_last), mean(last_30),
-           mean(one_large)),
-  split_after = c(find_split(examples$downward), find_split(smaller_last),
-                  find_split(last_30), find_split(one_large))
+  last_value = last_values,
+  mean = numeric(length(last_values)),
+  split_after = integer(length(last_values))
 )
+# 매번 원래 예제를 복사하고 마지막 숫자만 바꿔 표의 한 줄을 채움.
+for (i in seq_along(last_values)) {
+  numbers <- examples$downward
+  numbers[8] <- last_values[i]
+  large_comparison$mean[i] <- mean(numbers)
+  large_comparison$split_after[i] <- find_split(numbers)
+}
 print(large_comparison, row.names = FALSE)
 # last_value는 마지막 숫자임. 20인 줄이 원래 예제임.
 # mean은 전체 평균, split_after는 몇 번째 숫자 다음에서 나누는지 뜻함.
-# 25에서는 위치가 4임. 30과 60에서는 위치가 7로 바뀜.
+# 25와 26에서는 위치가 4임. 30과 60에서는 위치가 7로 바뀜.
+# 26일 때 4와 7의 평균 차이를 부호 없이 비교하면 3.5와 약 3.14임.
 # 숫자 하나로 위치가 바뀔 수 있으므로, 전체 흐름이 바뀌었다고 단정하지 않음.
