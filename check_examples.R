@@ -71,7 +71,8 @@ print(split_check)
 
 # 마지막 숫자 하나만 커지면 평균과 고르는 위치도 달라질지 비교함.
 # 평균은 올라갈 것으로 예상함. 고르는 위치는 계산해서 확인함.
-last_values <- c(20, 25, 26, 30, 60)
+# 26보다 1 큰 27에서도 같은 위치를 고르는지 살펴봄.
+last_values <- c(20, 25, 26, 27, 30, 60)
 large_comparison <- data.frame(
   last_value = last_values,
   mean = numeric(length(last_values)),
@@ -87,6 +88,6 @@ for (i in seq_along(last_values)) {
 print(large_comparison, row.names = FALSE)
 # last_value는 마지막 숫자임. 20인 줄이 원래 예제임.
 # mean은 전체 평균, split_after는 몇 번째 숫자 다음에서 나누는지 뜻함.
-# 25와 26에서는 위치가 4임. 30과 60에서는 위치가 7로 바뀜.
+# 25와 26에서는 위치가 4임. 27, 30, 60에서는 위치가 7로 바뀜.
 # 26일 때 4와 7의 평균 차이를 부호 없이 비교하면 3.5와 약 3.14임.
 # 숫자 하나로 위치가 바뀔 수 있으므로, 전체 흐름이 바뀌었다고 단정하지 않음.
