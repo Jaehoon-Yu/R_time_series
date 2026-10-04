@@ -76,6 +76,7 @@ last_values <- c(20, 25, 26, 27, 30, 60)
 large_comparison <- data.frame(
   last_value = last_values,
   mean = numeric(length(last_values)),
+  right_mean4 = numeric(length(last_values)),
   abs_gap4 = numeric(length(last_values)),
   abs_gap7 = numeric(length(last_values)),
   split_after = integer(length(last_values))
@@ -85,13 +86,16 @@ for (i in seq_along(last_values)) {
   numbers <- examples$downward
   numbers[8] <- last_values[i]
   large_comparison$mean[i] <- mean(numbers)
-  large_comparison$abs_gap4[i] <- abs(mean(numbers[5:8]) - mean(numbers[1:4]))
+  large_comparison$right_mean4[i] <- mean(numbers[5:8])
+  large_comparison$abs_gap4[i] <- abs(large_comparison$right_mean4[i] - mean(numbers[1:4]))
   large_comparison$abs_gap7[i] <- abs(mean(numbers[8]) - mean(numbers[1:7]))
   large_comparison$split_after[i] <- find_split(numbers)
 }
 print(large_comparison, row.names = FALSE)
 # last_value는 마지막 숫자임. 20인 줄이 원래 예제임.
 # mean은 전체 평균, split_after는 몇 번째 숫자 다음에서 나누는지 뜻함.
+# right_mean4는 4번째 뒤에서 나눴을 때 오른쪽 네 숫자의 평균임.
+# 26을 27로 바꾸면 합이 1 늘고 4로 나누므로, 이 평균은 0.25 올라감.
 # abs_gap4와 abs_gap7은 4번째, 7번째 뒤에서 나눴을 때 평균 차이의 크기임.
 # 25와 26에서는 위치가 4임. 27, 30, 60에서는 위치가 7로 바뀜.
 # 26에서는 4 쪽 차이가 더 크고, 27에서는 7 쪽 차이가 더 큼.
