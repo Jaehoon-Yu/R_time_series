@@ -103,3 +103,14 @@ print(large_comparison, row.names = FALSE)
 # 25와 26에서는 위치가 4임. 27, 30, 60에서는 위치가 7로 바뀜.
 # 26에서는 4 쪽 차이가 더 크고, 27에서는 7 쪽 차이가 더 큼.
 # 숫자 하나로 위치가 바뀔 수 있으므로, 전체 흐름이 바뀌었다고 단정하지 않음.
+
+# 양쪽에 숫자를 최소 두 개씩 남기면 7번째 뒤는 고를 수 없을 것으로 예상함.
+# 마지막 값이 27인 예제를 그대로 두고, 기존 min_segment 설정만 바꿔봄.
+last_27 <- examples$downward
+last_27[8] <- 27
+min_size_comparison <- c(
+  min_one = find_split(last_27, min_segment = 1),
+  min_two = find_split(last_27, min_segment = 2)
+)
+print(min_size_comparison)
+# min_one은 양쪽에 최소 한 개, min_two는 최소 두 개씩 남기는 경우임.
