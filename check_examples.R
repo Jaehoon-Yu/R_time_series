@@ -105,12 +105,19 @@ print(large_comparison, row.names = FALSE)
 # 숫자 하나로 위치가 바뀔 수 있으므로, 전체 흐름이 바뀌었다고 단정하지 않음.
 
 # 양쪽에 숫자를 최소 두 개씩 남기면 7번째 뒤는 고를 수 없을 것으로 예상함.
-# 마지막 값이 27인 예제를 그대로 두고, 기존 min_segment 설정만 바꿔봄.
-last_27 <- examples$downward
-last_27[8] <- 27
-min_size_comparison <- c(
-  min_one = find_split(last_27, min_segment = 1),
-  min_two = find_split(last_27, min_segment = 2)
+# 마지막 숫자만 27과 60으로 바꾸고, 기존 min_segment 설정을 비교함.
+min_size_values <- c(27, 60)
+min_size_comparison <- data.frame(
+  last_value = min_size_values,
+  min_one = integer(length(min_size_values)),
+  min_two = integer(length(min_size_values))
 )
-print(min_size_comparison)
+for (i in seq_along(min_size_values)) {
+  numbers <- examples$downward
+  numbers[8] <- min_size_values[i]
+  min_size_comparison$min_one[i] <- find_split(numbers, min_segment = 1)
+  min_size_comparison$min_two[i] <- find_split(numbers, min_segment = 2)
+}
+print(min_size_comparison, row.names = FALSE)
 # min_one은 양쪽에 최소 한 개, min_two는 최소 두 개씩 남기는 경우임.
+# 60일 때는 최소 두 개씩 남겨도 위치가 6임. 큰 숫자의 영향이 없어지는 것은 아님.
