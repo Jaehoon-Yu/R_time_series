@@ -104,10 +104,9 @@ print(large_comparison, row.names = FALSE)
 # 26에서는 4 쪽 차이가 더 크고, 27에서는 7 쪽 차이가 더 큼.
 # 숫자 하나로 위치가 바뀔 수 있으므로, 전체 흐름이 바뀌었다고 단정하지 않음.
 
-# 숫자가 여덟 개라 양쪽에 최소 네 개씩 남기면 4번째 뒤에서만 나눌 것으로 예상함.
-# 마지막 숫자만 27과 60으로 바꾸고, 기존 min_segment 설정을 비교함.
-# 같은 위치를 골라도 평균 차이는 다를 것으로 예상함.
-min_size_values <- c(27, 60)
+# 마지막 숫자가 40이면 4번째 뒤에서 나눈 양쪽 평균이 같을 것으로 예상함.
+# 마지막 숫자만 27, 40, 60으로 바꾸고, 기존 min_segment 설정을 비교함.
+min_size_values <- c(27, 40, 60)
 min_size_comparison <- data.frame(
   last_value = min_size_values,
   min_one = integer(length(min_size_values)),
@@ -128,7 +127,9 @@ for (i in seq_along(min_size_values)) {
 print(min_size_comparison, row.names = FALSE)
 # min_one은 양쪽에 최소 한 개, min_two는 최소 두 개씩 남기는 경우임.
 # min_three는 최소 세 개씩 남기는 경우임. 3, 4, 5번째 뒤에서만 나눌 수 있음.
-# min_four는 최소 네 개씩 남기는 경우임. 이 두 예제에서는 위치 4만 고를 수 있음.
-# 둘 다 4를 골라도 큰 숫자의 영향이 없어졌다는 뜻은 아님.
+# min_four는 최소 네 개씩 남기는 경우임. 4번째 뒤의 평균만 비교함.
+# 같은 위치를 골라도 큰 숫자의 영향이 없어졌다는 뜻은 아님.
 # gap_four는 4번째 뒤에서 나눠 오른쪽 평균에서 왼쪽 평균을 뺀 값임.
 # 27일 때는 -3.25, 60일 때는 5임. 음수면 오른쪽 평균이 더 작고 양수면 더 큼.
+# 40일 때는 양쪽 평균이 25라 차이가 0이고, min_four는 NA가 나옴.
+# 여기서 NA는 고른 위치가 없다는 뜻임. 숫자가 모두 같거나 변화가 없다는 뜻은 아님.
