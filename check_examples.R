@@ -105,8 +105,9 @@ print(large_comparison, row.names = FALSE)
 # 숫자 하나로 위치가 바뀔 수 있으므로, 전체 흐름이 바뀌었다고 단정하지 않음.
 
 # 마지막 숫자가 40이면 4번째 뒤에서 나눈 양쪽 평균이 같을 것으로 예상함.
-# 마지막 숫자만 27, 40, 60으로 바꾸고, 기존 min_segment 설정을 비교함.
-min_size_values <- c(27, 40, 60)
+# 40에서 41로 바꾸면 오른쪽 평균만 0.25 올라갈 것으로 예상함.
+# 마지막 숫자만 바꾸고, 기존 min_segment 설정을 비교함.
+min_size_values <- c(27, 40, 41, 60)
 min_size_comparison <- data.frame(
   last_value = min_size_values,
   min_one = integer(length(min_size_values)),
@@ -132,6 +133,8 @@ print(min_size_comparison, row.names = FALSE)
 # gap_four는 4번째 뒤에서 나눠 오른쪽 평균에서 왼쪽 평균을 뺀 값임.
 # 27일 때는 -3.25, 60일 때는 5임. 음수면 오른쪽 평균이 더 작고 양수면 더 큼.
 # 40일 때는 양쪽 평균이 25라 차이가 0이고, min_four는 NA가 나옴.
+# 41일 때는 오른쪽 평균이 25.25라 차이는 0.25이고, min_four는 4를 고름.
+# 위치를 골랐다는 것만으로 평균 차이가 크다고 볼 수는 없음.
 # 여기서 NA는 고른 위치가 없다는 뜻임. 숫자가 모두 같거나 변화가 없다는 뜻은 아님.
 # 같은 40 예제를 5번째 뒤에서 나누면 왼쪽 평균은 120/5 = 24임.
 # 오른쪽 평균은 80/3으로 약 26.67이라 차이는 약 2.67임.
