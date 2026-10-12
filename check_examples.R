@@ -107,6 +107,7 @@ print(large_comparison, row.names = FALSE)
 # 마지막 숫자가 40이면 4번째 뒤에서 나눈 양쪽 평균이 같을 것으로 예상함.
 # 40에서 39나 41로 바꾸면 오른쪽 평균만 0.25 내려가거나 올라갈 것으로 예상함.
 # 마지막 숫자만 바꾸고, 기존 min_segment 설정을 비교함.
+# 같은 숫자라도 4번째 대신 5번째 뒤에서 나누면 평균 차이가 달라질 것으로 예상함.
 min_size_values <- c(27, 39, 40, 41, 60)
 min_size_comparison <- data.frame(
   last_value = min_size_values,
@@ -114,7 +115,8 @@ min_size_comparison <- data.frame(
   min_two = integer(length(min_size_values)),
   min_three = integer(length(min_size_values)),
   min_four = integer(length(min_size_values)),
-  gap_four = numeric(length(min_size_values))
+  gap_four = numeric(length(min_size_values)),
+  gap_five = numeric(length(min_size_values))
 )
 for (i in seq_along(min_size_values)) {
   numbers <- examples$downward
@@ -124,6 +126,7 @@ for (i in seq_along(min_size_values)) {
   min_size_comparison$min_three[i] <- find_split(numbers, min_segment = 3)
   min_size_comparison$min_four[i] <- find_split(numbers, min_segment = 4)
   min_size_comparison$gap_four[i] <- mean(numbers[5:8]) - mean(numbers[1:4])
+  min_size_comparison$gap_five[i] <- mean(numbers[6:8]) - mean(numbers[1:5])
 }
 print(min_size_comparison, row.names = FALSE)
 # min_one은 양쪽에 최소 한 개, min_two는 최소 두 개씩 남기는 경우임.
@@ -131,7 +134,9 @@ print(min_size_comparison, row.names = FALSE)
 # min_four는 최소 네 개씩 남기는 경우임. 4번째 뒤의 평균만 비교함.
 # 같은 위치를 골라도 큰 숫자의 영향이 없어졌다는 뜻은 아님.
 # gap_four는 4번째 뒤에서 나눠 오른쪽 평균에서 왼쪽 평균을 뺀 값임.
-# 이 예제의 오른쪽 평균은 (60 + 마지막 숫자) / 4임.
+# gap_five는 같은 숫자를 5번째 뒤에서 나눠 구한 차이임.
+# 39인 줄은 gap_four가 -0.25, gap_five가 약 2.33으로 부호도 달라짐.
+# 4번째 뒤에서 나눌 때 오른쪽 평균은 (60 + 마지막 숫자) / 4임.
 # 왼쪽 평균 25를 빼면 (마지막 숫자 - 40) / 4라서 40일 때 차이가 0임.
 # 27일 때는 -3.25, 60일 때는 5임. 음수면 오른쪽 평균이 더 작고 양수면 더 큼.
 # 40일 때는 양쪽 평균이 25라 차이가 0이고, min_four는 NA가 나옴.
