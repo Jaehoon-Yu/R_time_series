@@ -147,3 +147,15 @@ print(min_size_comparison, row.names = FALSE)
 # 같은 40 예제를 5번째 뒤에서 나누면 왼쪽 평균은 120/5 = 24임.
 # 오른쪽 평균은 80/3으로 약 26.67이라 차이는 약 2.67임.
 # 최소 세 개 설정은 3, 4번째 뒤의 차이 0보다 이 차이가 커서 5를 고름.
+
+# 같은 39 예제에서 끝의 두 숫자 자리만 바꿔봄.
+# 전체 평균은 같을 것으로 예상함. 고르는 위치도 같은지 비교함.
+before_swap <- examples$downward
+before_swap[8] <- 39
+after_swap <- before_swap
+after_swap[7] <- before_swap[8]
+after_swap[8] <- before_swap[7]
+print(c(before = mean(before_swap), after = mean(after_swap)))
+print(c(before = find_split(before_swap), after = find_split(after_swap)))
+# 기본 설정에서는 양쪽에 최소 한 개씩 남김.
+# 전체 평균은 둘 다 24.875지만 고른 위치는 7에서 6으로 바뀜.
