@@ -159,3 +159,7 @@ print(c(before = mean(before_swap), after = mean(after_swap)))
 print(c(before = find_split(before_swap), after = find_split(after_swap)))
 # 기본 설정에서는 양쪽에 최소 한 개씩 남김.
 # 전체 평균은 둘 다 24.875지만 고른 위치는 7에서 6으로 바뀜.
+print(c(before_min_two = find_split(before_swap, min_segment = 2),
+        after_min_two = find_split(after_swap, min_segment = 2)))
+# 최소 두 개씩 남기면 7번째 뒤는 제외되고, 두 경우 모두 위치 6을 고름.
+# 이때 바꾼 두 숫자가 같은 오른쪽 구간에 남아 그 구간 평균은 같음.
