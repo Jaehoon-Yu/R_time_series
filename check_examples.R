@@ -163,3 +163,12 @@ print(c(before_min_two = find_split(before_swap, min_segment = 2),
         after_min_two = find_split(after_swap, min_segment = 2)))
 # 최소 두 개씩 남기면 7번째 뒤는 제외되고, 두 경우 모두 위치 6을 고름.
 # 이때 바꾼 두 숫자가 같은 오른쪽 구간에 남아 그 구간 평균은 같음.
+
+# 이번에는 6번째와 7번째의 20, 39를 바꾸고 6번째 뒤에서만 나눠봄.
+# 39가 왼쪽으로 옮겨가면 왼쪽 평균은 커지고 오른쪽 평균은 작아질 것으로 예상함.
+across_swap <- after_swap
+across_swap[6] <- after_swap[7]
+across_swap[7] <- after_swap[6]
+print(c(before_gap6 = mean(after_swap[7:8]) - mean(after_swap[1:6]),
+        after_gap6 = mean(across_swap[7:8]) - mean(across_swap[1:6])))
+# 오른쪽 평균에서 왼쪽 평균을 뺀 차이가 약 6.17에서 -6.5로 바뀜.
