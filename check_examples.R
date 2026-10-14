@@ -172,3 +172,6 @@ across_swap[7] <- after_swap[6]
 print(c(before_gap6 = mean(after_swap[7:8]) - mean(after_swap[1:6]),
         after_gap6 = mean(across_swap[7:8]) - mean(across_swap[1:6])))
 # 오른쪽 평균에서 왼쪽 평균을 뺀 차이가 약 6.17에서 -6.5로 바뀜.
+print(c(before_min_two = find_split(after_swap, min_segment = 2),
+        after_min_two = find_split(across_swap, min_segment = 2)))
+# 차이의 방향은 바뀌었지만, 최소 두 개씩 남기면 둘 다 위치 6을 고름.
