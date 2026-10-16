@@ -182,3 +182,12 @@ for (minimum in c(2, 3)) {
 # 최소 세 개씩 남기면 3, 4, 5번째 뒤만 비교하고 둘 다 위치 5를 고름.
 # 5번째 뒤에서는 바꾼 20과 39가 둘 다 오른쪽 구간에 남음.
 # 두 경우 모두 왼쪽 평균은 24, 오른쪽은 79/3(약 26.33)이라 차이는 약 2.33임.
+
+# 5번째 뒤에서 나누고, 이번에는 그 앞뒤의 20과 39를 바꿔봄.
+# 39가 왼쪽으로 옮겨가면 왼쪽 평균이 더 커질 것으로 예상함.
+near_swap <- across_swap
+near_swap[5] <- across_swap[6]
+near_swap[6] <- across_swap[5]
+print(c(before_gap5 = mean(across_swap[6:8]) - mean(across_swap[1:5]),
+        after_gap5 = mean(near_swap[6:8]) - mean(near_swap[1:5])))
+# 같은 위치에서 비교한 차이가 약 2.33에서 -7.8로 바뀜.
