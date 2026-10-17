@@ -191,7 +191,12 @@ near_swap[6] <- across_swap[5]
 print(c(before_gap5 = mean(across_swap[6:8]) - mean(across_swap[1:5]),
         after_gap5 = mean(near_swap[6:8]) - mean(near_swap[1:5])))
 # 같은 위치에서 비교한 차이가 약 2.33에서 -7.8로 바뀜.
-print(c(before_min_three = find_split(across_swap, min_segment = 3),
-        after_min_three = find_split(near_swap, min_segment = 3)))
+# 최소 네 개씩 남기면 4번째 뒤만 비교할 수 있을 것으로 예상함.
+for (minimum in c(3, 4)) {
+  print(c(minimum = minimum,
+          before = find_split(across_swap, min_segment = minimum),
+          after = find_split(near_swap, min_segment = minimum)))
+}
 # 최소 세 개씩 남기면 3, 4, 5번째 뒤를 비교하고, 두 경우 모두 위치 5를 고름.
-# 고른 위치는 같지만 평균 차이의 방향과 크기는 달랐음.
+# 이때 고른 위치는 같지만 평균 차이의 방향과 크기는 달랐음.
+# 최소 네 개씩 남기면 위치 5는 빠지고, 두 경우 모두 위치 4를 고름.
