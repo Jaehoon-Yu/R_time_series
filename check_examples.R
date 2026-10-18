@@ -226,3 +226,5 @@ for (large_value in c(39, 29, 30)) {
 print(c(before_three = mean(swap_before[5:7]) - mean(swap_before[1:4]),
         after_three = mean(swap_after[5:7]) - mean(swap_after[1:4])))
 # 평균 차이는 약 -1.67에서 -4.58로 바뀌어, 변화폭은 약 2.92였음.
+# 왼쪽 합은 100에서 105가 되어 평균이 5/4 = 1.25 커짐.
+# 오른쪽 합은 70에서 65가 되어 평균이 5/3만큼 작아짐. 차이의 변화폭은 5/4 + 5/3임.
