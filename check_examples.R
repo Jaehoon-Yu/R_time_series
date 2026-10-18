@@ -205,9 +205,16 @@ for (minimum in c(3, 4)) {
 # 최소 개수만 세 개에서 네 개로 바꿔도, 같은 4번째 뒤의 평균은 그대로임.
 
 # 최소 네 개 조건은 그대로 두고, 4번째와 5번째의 25, 39 자리만 바꿔봄.
-four_swap <- near_swap
-four_swap[4] <- near_swap[5]
-four_swap[5] <- near_swap[4]
-print(split_gaps(four_swap, min_segment = 4), row.names = FALSE)
-# 왼쪽 평균은 28.5, 오른쪽은 21.25가 되어 차이가 -0.25에서 -7.25로 바뀜.
-# 비교할 위치가 하나여도 숫자가 구간을 건너면 평균 차이는 달라질 수 있음.
+# 39 대신 29를 쓰면 자리 교환에 따른 평균 차이의 변화폭도 작을 것으로 예상함.
+for (large_value in c(39, 29)) {
+  swap_before <- near_swap
+  swap_before[5] <- large_value
+  swap_after <- swap_before
+  swap_after[4] <- swap_before[5]
+  swap_after[5] <- swap_before[4]
+  before_four <- split_gaps(swap_before, min_segment = 4)
+  after_four <- split_gaps(swap_after, min_segment = 4)
+  print(c(value = large_value, before_gap = before_four$gap, after_gap = after_four$gap))
+}
+# 39일 때 평균 차이는 -0.25에서 -7.25로, 29일 때는 -2.75에서 -4.75로 바뀜.
+# 이 두 예제에서 자리 교환에 따른 평균 차이의 변화폭은 7과 2였음.
