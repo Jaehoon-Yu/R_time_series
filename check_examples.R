@@ -228,3 +228,9 @@ print(c(before_three = mean(swap_before[5:7]) - mean(swap_before[1:4]),
 # 평균 차이는 약 -1.67에서 -4.58로 바뀌어, 변화폭은 약 2.92였음.
 # 왼쪽 합은 100에서 105가 되어 평균이 5/4 = 1.25 커짐.
 # 오른쪽 합은 70에서 65가 되어 평균이 5/3만큼 작아짐. 차이의 변화폭은 5/4 + 5/3임.
+
+# 같은 일곱 개에서 양쪽에 최소 세 개씩 남기면 3, 4번째 뒤를 비교함.
+# 3번째 뒤를 함께 비교해도, 두 경우 모두 4번째 뒤의 차이 크기가 더 클 것으로 예상함.
+print(c(before_min_three = find_split(swap_before[1:7], min_segment = 3),
+        after_min_three = find_split(swap_after[1:7], min_segment = 3)))
+# 자리 교환 전후 모두 4를 골랐음. 평균 차이의 크기는 달라도 고른 위치는 같았음.
