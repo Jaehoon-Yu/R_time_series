@@ -231,6 +231,12 @@ print(c(before_three = mean(swap_before[5:7]) - mean(swap_before[1:4]),
 
 # 같은 일곱 개에서 양쪽에 최소 세 개씩 남기면 3, 4번째 뒤를 비교함.
 # 3번째 뒤를 함께 비교해도, 두 경우 모두 4번째 뒤의 차이 크기가 더 클 것으로 예상함.
-print(c(before_min_three = find_split(swap_before[1:7], min_segment = 3),
-        after_min_three = find_split(swap_after[1:7], min_segment = 3)))
-# 자리 교환 전후 모두 4를 골랐음. 평균 차이의 크기는 달라도 고른 위치는 같았음.
+# 숫자는 그대로 두고, 최소 개수만 세 개와 두 개로 바꿔 비교함.
+for (minimum in c(3, 2)) {
+  print(c(minimum = minimum,
+          before = find_split(swap_before[1:7], min_segment = minimum),
+          after = find_split(swap_after[1:7], min_segment = minimum)))
+}
+# 최소 세 개일 때는 자리 교환 전후 모두 4를, 두 개일 때는 모두 5를 골랐음.
+# 두 개일 때 새로 비교하는 5번째 뒤에서는 25와 30이 모두 왼쪽에 남음.
+# 두 경우 모두 왼쪽 평균 130/5 = 26, 오른쪽 평균 40/2 = 20이라 차이는 -6임.
