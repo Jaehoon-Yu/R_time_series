@@ -241,10 +241,15 @@ for (minimum in c(3, 2)) {
 # 두 개일 때 새로 비교하는 5번째 뒤에서는 25와 30이 모두 왼쪽에 남음.
 # 두 경우 모두 왼쪽 평균 130/5 = 26, 오른쪽 평균 40/2 = 20이라 차이는 -6임.
 
-# 같은 일곱 개와 최소 두 개 조건에서 마지막 20만 21로 바꿔봄.
-# 평균 차이의 크기는 조금 줄고, 고르는 위치는 5로 유지될 것으로 예상함.
-small_change <- swap_before[1:7]
-small_change[7] <- 21
-print(c(gap5 = mean(small_change[6:7]) - mean(small_change[1:5]),
-        split_after = find_split(small_change, min_segment = 2)))
-# 오른쪽 평균이 20에서 20.5로 올라 차이는 -6에서 -5.5로 바뀌고, 위치는 5였음.
+# 같은 일곱 개와 최소 두 개 조건에서 1을 더하는 자리만 바꿔봄.
+# 마지막 20을 21로 바꾸면 차이의 크기는 조금 줄고, 위치는 5로 유지될 것으로 예상함.
+for (changed_at in c(7, 1)) {
+  small_change <- swap_before[1:7]
+  small_change[changed_at] <- small_change[changed_at] + 1
+  print(c(changed_at = changed_at,
+          gap5 = mean(small_change[6:7]) - mean(small_change[1:5]),
+          split_after = find_split(small_change, min_segment = 2)))
+}
+# 마지막 20만 21로 바꾸면 오른쪽 평균이 20.5가 되어 차이는 -5.5이고, 위치는 5였음.
+# 첫 25만 26으로 바꾸면 왼쪽 평균은 26.2가 되어 차이는 -6.2이고, 위치는 5였음.
+# 같은 1을 더해도 두 개의 평균은 1/2, 다섯 개의 평균은 1/5만큼 올라감.
