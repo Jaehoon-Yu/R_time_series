@@ -241,15 +241,16 @@ for (minimum in c(3, 2)) {
 # 두 개일 때 새로 비교하는 5번째 뒤에서는 25와 30이 모두 왼쪽에 남음.
 # 두 경우 모두 왼쪽 평균 130/5 = 26, 오른쪽 평균 40/2 = 20이라 차이는 -6임.
 
-# 같은 일곱 개와 최소 두 개 조건에서 1을 더하는 자리만 바꿔봄.
-# 마지막 20을 21로 바꾸면 차이의 크기는 조금 줄고, 위치는 5로 유지될 것으로 예상함.
-for (changed_at in c(7, 1)) {
+# 같은 일곱 개와 최소 두 개 조건에서 마지막 값에 더하는 양만 바꿔봄.
+# 1 대신 10을 더하면 평균 차이뿐 아니라 고른 위치도 달라질 수 있을 것으로 예상함.
+for (increase in c(0, 1, 10)) {
   small_change <- swap_before[1:7]
-  small_change[changed_at] <- small_change[changed_at] + 1
-  print(c(changed_at = changed_at,
+  small_change[7] <- small_change[7] + increase
+  print(c(increase = increase,
+          gap4 = mean(small_change[5:7]) - mean(small_change[1:4]),
           gap5 = mean(small_change[6:7]) - mean(small_change[1:5]),
           split_after = find_split(small_change, min_segment = 2)))
 }
-# 마지막 20만 21로 바꾸면 오른쪽 평균이 20.5가 되어 차이는 -5.5이고, 위치는 5였음.
-# 첫 25만 26으로 바꾸면 왼쪽 평균은 26.2가 되어 차이는 -6.2이고, 위치는 5였음.
-# 같은 1을 더해도 두 개의 평균은 1/2, 다섯 개의 평균은 1/5만큼 올라감.
+# 마지막 값이 20, 21, 30일 때 5번째 뒤의 차이는 -6, -5.5, -1임.
+# 30일 때 4번째 뒤의 차이는 약 1.67이라, 차이의 크기가 1인 5번째 뒤보다 큼.
+# 모든 후보를 비교해 고른 위치는 5, 5, 4였음. 1을 더했을 때의 결과가 계속 유지되지는 않았음.
