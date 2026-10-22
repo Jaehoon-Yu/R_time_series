@@ -243,7 +243,7 @@ for (minimum in c(3, 2)) {
 
 # 같은 일곱 개와 최소 두 개 조건에서 마지막 값에 더하는 양만 바꿔봄.
 # 1 대신 10을 더하면 평균 차이뿐 아니라 고른 위치도 달라질 수 있을 것으로 예상함.
-for (increase in c(0, 1, 10)) {
+for (increase in c(0, 1, 9, 10)) {
   small_change <- swap_before[1:7]
   small_change[7] <- small_change[7] + increase
   print(c(increase = increase,
@@ -251,6 +251,7 @@ for (increase in c(0, 1, 10)) {
           gap5 = mean(small_change[6:7]) - mean(small_change[1:5]),
           split_after = find_split(small_change, min_segment = 2)))
 }
-# 마지막 값이 20, 21, 30일 때 5번째 뒤의 차이는 -6, -5.5, -1임.
+# 마지막 값이 20, 21, 29, 30일 때 5번째 뒤의 차이는 -6, -5.5, -1.5, -1임.
+# 29일 때 4번째 뒤의 차이는 약 1.33이라, 차이의 크기가 1.5인 5번째 뒤보다 작음.
 # 30일 때 4번째 뒤의 차이는 약 1.67이라, 차이의 크기가 1인 5번째 뒤보다 큼.
-# 모든 후보를 비교해 고른 위치는 5, 5, 4였음. 1을 더했을 때의 결과가 계속 유지되지는 않았음.
+# 모든 후보를 비교해 고른 위치는 5, 5, 5, 4였음. 마지막 값이 29에서 30으로 바뀌면 위치도 달라졌음.
