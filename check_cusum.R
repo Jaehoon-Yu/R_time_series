@@ -1,5 +1,6 @@
 source("R/cusum_panel.R")
 source("R/double_cusum.R")
+source("R/double_cusum_scan.R")
 
 # 두 시계열을 한 번에 넣음. 첫 행만 중간에 평균이 올라감.
 panel <- rbind(changing = c(0, 0, 4, 4), constant = c(3, 3, 3, 3))
@@ -14,3 +15,8 @@ print(combined)
 # 가운데 열의 점수 크기는 4와 0임. 1개를 묶으면 약 3.464, 2개면 2임.
 # 출력의 행 1, 2는 묶은 점수 개수임. 원래 시계열의 행 번호가 아님.
 # 아직 기준값과 비교하지 않았으므로 변화가 있다고 판정한 것은 아님.
+
+candidate <- double_cusum_scan(panel)
+print(candidate)
+# 예상한 가운데 위치 2와 묶은 개수 1이 나옴. 가장 큰 점수는 약 3.464임.
+# split은 나누는 후보이며, 변화가 확정됐다는 뜻은 아님.
