@@ -20,3 +20,8 @@ candidate <- double_cusum_scan(panel)
 print(candidate)
 # 예상한 가운데 위치 2와 묶은 개수 1이 나옴. 가장 큰 점수는 약 3.464임.
 # split은 나누는 후보이며, 변화가 확정됐다는 뜻은 아님.
+
+# 구간을 지정하면 앞뒤의 다른 값은 계산에서 제외함.
+extended_panel <- cbind(c(100, -100), panel, c(-100, 100))
+print(double_cusum_scan(extended_panel, start = 2, end = 5))
+# 점수는 그대로이고, 후보는 원래 자료의 세 번째 값 뒤인 3으로 나옴.

@@ -70,4 +70,20 @@ for (bad in list(1:4, matrix(numeric(0), 0, 3), matrix(1, 2, 1),
   caught <- tryCatch({ double_cusum_scan(bad); FALSE }, error = function(e) TRUE)
   stopifnot(caught)
 }
+
+# Interval draft: ignore the surrounding values and map back to input columns.
+extended <- cbind(c(100, -100), panel, c(-100, 100))
+interval <- double_cusum_scan(extended, start = 2L, end = 5L)
+stopifnot(isTRUE(all.equal(interval$statistic, 2 * sqrt(3))),
+          interval$split == 3L, interval$m == 1L,
+          identical(double_cusum_scan(panel),
+                    double_cusum_scan(panel, start = 1L, end = ncol(panel))))
+one_row <- double_cusum_scan(matrix(c(100L, 0L, 4L, 100L), 1), 2L, 3L)
+stopifnot(isTRUE(all.equal(one_row$statistic, 2)),
+          one_row$split == 2L, one_row$m == 1L)
+for (bounds in list(c(0, 4), c(2, 2), c(4, 2), c(1, 5), c(1.5, 4))) {
+  caught <- tryCatch({ double_cusum_scan(panel, bounds[1], bounds[2]); FALSE },
+                     error = function(e) TRUE)
+  stopifnot(caught)
+}
 cat("All Double CUSUM scan tests passed.\n")
