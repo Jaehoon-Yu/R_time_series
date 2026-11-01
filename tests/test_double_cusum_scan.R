@@ -1,6 +1,7 @@
 source("R/cusum_panel.R")
 source("R/double_cusum.R")
 source("R/double_cusum_scan.R")
+source("tests/helpers/reference_candidates.R")
 
 # Known panel: the largest entry is at split 2, m = 1.
 panel <- rbind(c(0, 0, 4, 4), c(3, 3, 3, 3))
@@ -18,29 +19,6 @@ stopifnot(isTRUE(all.equal(result$statistic, 4)),
 flat <- double_cusum_scan(matrix(3, 2, 4))
 stopifnot(flat$statistic == 0, flat$split == 1L, flat$m == 1L,
           identical(names(flat), c("statistic", "split", "m")))
-
-# Independent reference: direct means (no cumulative sums or production calls).
-# Appending n zeros makes the second group size 2*n-m, as in the DC formula.
-reference_candidates <- function(x) {
-  n <- nrow(x)
-  nt <- ncol(x)
-  candidates <- expand.grid(m = seq_len(n), split = seq_len(nt - 1L))
-  candidates$statistic <- NA_real_
-  for (k in seq_len(nt - 1L)) {
-    scores <- numeric(n)
-    for (j in seq_len(n)) {
-      scores[j] <- sqrt(k * (nt - k) / nt) *
-        (mean(x[j, seq_len(k)]) - mean(x[j, (k + 1L):nt]))
-    }
-    padded <- c(sort(abs(scores), decreasing = TRUE), rep(0, n))
-    for (m in seq_len(n)) {
-      value <- sqrt(m * (2 * n - m) / (2 * n)) *
-        (mean(padded[seq_len(m)]) - mean(padded[(m + 1L):(2 * n)]))
-      candidates$statistic[candidates$split == k & candidates$m == m] <- value
-    }
-  }
-  candidates
-}
 
 mixed <- rbind(c(1, -2, 0, 5, 4, 7), c(3, 1, -1, 0, 2, 1),
                c(-4, -3, -5, -1, 1, 2))
