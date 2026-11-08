@@ -3,6 +3,29 @@ source("R/double_cusum.R")
 source("R/double_cusum_scan.R")
 source("R/double_cusum_decision.R")
 source("R/double_cusum_segment.R")
+source("tests/helpers/reference_candidates.R")
+
+# Independent control flow: a queue of intervals, with direct means for scores.
+# No production functions are called by this reference.
+reference_segments <- function(x, threshold, start = 1L, end = ncol(x)) {
+  pending <- list(c(start, end))
+  next_interval <- 1L
+  changes <- integer(0)
+  while (next_interval <= length(pending)) {
+    bounds <- pending[[next_interval]]
+    next_interval <- next_interval + 1L
+    if (bounds[1L] >= bounds[2L]) next
+    candidates <- reference_candidates(x[, bounds[1L]:bounds[2L], drop = FALSE])
+    winner <- order(-candidates$statistic, candidates$split, candidates$m)[1L]
+    if (candidates$statistic[winner] > threshold) {
+      split <- bounds[1L] + candidates$split[winner] - 1L
+      changes <- c(changes, split)
+      pending <- c(pending, list(c(bounds[1L], split),
+                                c(split + 1L, bounds[2L])))
+    }
+  }
+  sort(as.integer(changes))
+}
 
 # The whole interval chooses 2; rescanning its right child chooses original 4.
 # Both rows agree, so the combined score equals one row's CUSUM magnitude.
@@ -11,6 +34,13 @@ panel <- rbind(c(0, 0, 4, 4, 0, 0), c(0, 0, 4, 4, 0, 0))
 stopifnot(identical(double_cusum_segment(panel, 2), c(2L, 4L)))
 # Stopping at the root must stop the entire search, even if a child could pass.
 stopifnot(identical(double_cusum_segment(panel, 3), integer(0)))
+
+# Root chooses 4 (score 16/sqrt(3)); the left child then chooses 2 (score 4).
+left_panel <- rbind(c(0, 0, 4, 4, 10, 10), c(0, 0, 4, 4, 10, 10))
+stopifnot(identical(double_cusum_segment(left_panel, 3), c(2L, 4L)),
+          identical(reference_segments(left_panel, 3), c(2L, 4L)),
+          identical(reference_segments(panel, 2), c(2L, 4L)),
+          identical(reference_segments(panel, 3), integer(0)))
 
 single <- rbind(c(0, 0, 4, 4), c(0, 0, 4, 4))
 stopifnot(identical(double_cusum_segment(single, 3), 2L),
@@ -23,6 +53,20 @@ stopifnot(identical(double_cusum_segment(matrix(c(0, 4), 1), 1), 1L))
 extended <- cbind(c(100, -100), panel, c(-100, 100))
 stopifnot(identical(double_cusum_segment(extended, 2, 2, 7), c(3L, 5L)))
 
+# Compare complete splitting results on all 15 intervals at three cutoffs.
+# Reuse the irregular panel from the decision checks, now checking the tree.
+mixed <- rbind(c(1, -2, 0, 5, 4, 7), c(3, 1, -1, 0, 2, 1),
+               c(-4, -3, -5, -1, 1, 2))
+for (start in seq_len(ncol(mixed) - 1L)) {
+  for (end in seq.int(start + 1L, ncol(mixed))) {
+    for (cutoff in c(0.75, 2.5, 20)) {
+      expected <- reference_segments(mixed, cutoff, start, end)
+      actual <- double_cusum_segment(mixed, cutoff, start, end)
+      stopifnot(identical(actual, expected))
+    }
+  }
+}
+
 bad_calls <- list(list(x = panel, threshold = -1),
                   list(x = panel, threshold = NA_real_),
                   list(x = panel, threshold = TRUE),
@@ -34,4 +78,4 @@ for (args in bad_calls) {
                     error = function(e) TRUE)
   stopifnot(caught)
 }
-cat("double_cusum_segment checks passed\n")
+cat("double_cusum_segment checks passed (45 independent interval comparisons)\n")
