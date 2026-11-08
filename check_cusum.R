@@ -2,6 +2,7 @@ source("R/cusum_panel.R")
 source("R/double_cusum.R")
 source("R/double_cusum_scan.R")
 source("R/double_cusum_decision.R")
+source("R/double_cusum_segment.R")
 
 # 두 시계열을 한 번에 넣음. 첫 행만 중간에 평균이 올라감.
 panel <- rbind(changing = c(0, 0, 4, 4), constant = c(3, 3, 3, 3))
@@ -32,4 +33,10 @@ print(double_cusum_decision(panel, threshold = 3))
 # 약 3.464가 3보다 크므로 TRUE와 위치 2를 돌려줌.
 print(double_cusum_decision(matrix(3, 2, 4), threshold = 0))
 # 값이 일정하면 점수가 0이라 FALSE가 나옴. NA는 선택한 위치가 없다는 뜻임.
-# 실제 자료에 맞는 기준값을 구하거나 여러 변화점을 찾는 기능은 아직 없음.
+# 실제 자료에 맞는 기준값을 자동으로 구하는 기능은 아직 없음.
+
+# 올라갔다 내려오는 두 시계열에서 구간을 나누고 안쪽을 다시 검사함.
+two_changes <- rbind(c(0, 0, 4, 4, 0, 0), c(0, 0, 4, 4, 0, 0))
+print(double_cusum_segment(two_changes, threshold = 2))
+# 위치 2와 4가 나옴. 처음 고른 위치 2의 오른쪽을 다시 계산해 4를 찾음.
+# 기준값 2는 이 예제용임. 이 기본 분할만으로 논문 전체 방법이 완성된 것은 아님.
