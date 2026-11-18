@@ -39,5 +39,20 @@ for (bad in list(1:4, matrix(numeric(0), 0, 4), matrix(1:3, 3, 1),
                  matrix(c("1", "2"), 1), matrix(c(TRUE, FALSE), 1))) {
   expect_error(cusum_panel(bad))
 }
+# Supplied row scales divide the scores; no recycling across series is allowed.
+scaled_panel <- rbind(c(0, 0, 4, 4), c(0, 0, 8, 8))
+scaled_expected <- rbind(c(-2 / sqrt(3), -2, -2 / sqrt(3)),
+                         c(-2 / sqrt(3), -2, -2 / sqrt(3)))
+stopifnot(isTRUE(all.equal(unname(cusum_panel(scaled_panel, c(2, 4))),
+                          scaled_expected)),
+          identical(cusum_panel(panel), cusum_panel(panel, c(1, 1))),
+          isTRUE(all.equal(as.numeric(cusum_panel(matrix(c(1, 3), 1), 2)),
+                           -sqrt(2) / 2)))
+for (bad_scale in list(1, c(1, 2, 3), numeric(0), c(0, 1), c(-1, 1),
+                       c(NA, 1), c(Inf, 1), c(1+1i, 1), c(TRUE, FALSE),
+                       c("1", "2"), matrix(c(1, 2), 2))) {
+  expect_error(cusum_panel(scaled_panel, bad_scale))
+}
+expect_error(cusum_panel(matrix(c(1+1i, 3), 1)))
 expect_error(cusum_panel(matrix(c(-1e308, 1e308), 1)))
 cat("All panel CUSUM tests passed.\n")
