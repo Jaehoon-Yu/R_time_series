@@ -42,6 +42,23 @@ stopifnot(identical(double_cusum_segment(left_panel, 3), c(2L, 4L)),
           identical(reference_segments(panel, 2), c(2L, 4L)),
           identical(reference_segments(panel, 3), integer(0)))
 
+# Scaling must reach the root and BOTH recursive branches unchanged.
+# Root score is 52/15; the smaller change's child score is 13*sqrt(3)/15 < 3.
+# Omitting scale in either child would restore score 4 and add a false split.
+row_scale <- c(2, 5)
+scaled_scan <- double_cusum_scan(left_panel, scale = row_scale)
+scaled_decision <- double_cusum_decision(left_panel, 3, scale = row_scale)
+stopifnot(isTRUE(all.equal(scaled_scan$statistic, 52 / 15)),
+          scaled_scan$split == 4L, scaled_scan$m == 1L,
+          isTRUE(scaled_decision$exceeds_threshold), scaled_decision$split == 4L,
+          !double_cusum_decision(left_panel, 4, scale = row_scale)$exceeds_threshold,
+          identical(double_cusum_segment(left_panel, 3, scale = row_scale), 4L),
+          identical(double_cusum_segment(left_panel[, 6:1], 3,
+                                          scale = row_scale), 2L))
+scaled_extended <- cbind(c(100, -100), left_panel, c(-100, 100))
+stopifnot(identical(double_cusum_segment(scaled_extended, 3, 2, 7,
+                                        scale = row_scale), 5L))
+
 single <- rbind(c(0, 0, 4, 4), c(0, 0, 4, 4))
 stopifnot(identical(double_cusum_segment(single, 3), 2L),
           identical(double_cusum_segment(single, 4), integer(0)),
@@ -72,7 +89,9 @@ bad_calls <- list(list(x = panel, threshold = -1),
                   list(x = panel, threshold = TRUE),
                   list(x = matrix(1, 2, 1), threshold = 0),
                   list(x = panel, threshold = 2, start = 2, end = 2),
-                  list(x = panel, threshold = 2, end = 7))
+                  list(x = panel, threshold = 2, end = 7),
+                  list(x = panel, threshold = 2, scale = c(0, 1)),
+                  list(x = panel, threshold = 2, scale = 1))
 for (args in bad_calls) {
   caught <- tryCatch({ do.call(double_cusum_segment, args); FALSE },
                     error = function(e) TRUE)

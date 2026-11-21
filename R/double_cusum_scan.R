@@ -5,7 +5,9 @@
 # m은 실제로 변화한 시계열 개수를 확정한 값이 아님.
 # 점수가 정확히 같으면 앞쪽 split, 그 안에서는 작은 m을 고름.
 # 점수가 모두 0이어도 후보는 나옴. 실제 변화 여부를 판단하는 함수는 아님.
-double_cusum_scan <- function(x, start = 1L, end = ncol(x)) {
+# scale은 행 순서대로 넣는 양수이며, 생략하면 각 행에 1을 씀.
+double_cusum_scan <- function(x, start = 1L, end = ncol(x),
+                              scale = rep(1, nrow(x))) {
   if (!is.matrix(x) || !(is.double(x) || is.integer(x)) ||
       nrow(x) < 1L || ncol(x) < 2L || any(!is.finite(x))) {
     stop("x must be a finite real numeric matrix: rows are series, columns are times.")
@@ -22,7 +24,7 @@ double_cusum_scan <- function(x, start = 1L, end = ncol(x)) {
   end <- as.integer(end)
   # 구간 안에서 평균과 점수를 다시 계산함. 한 행이어도 행렬 모양을 유지함.
   segment <- x[, seq.int(start, end), drop = FALSE]
-  combined <- double_cusum(cusum_panel(segment))
+  combined <- double_cusum(cusum_panel(segment, scale = scale))
   # R은 행렬을 첫 열부터 읽으므로 같은 최고 점수에서 위 순서가 적용됨.
   best <- which.max(combined)
   position <- arrayInd(best, dim(combined))

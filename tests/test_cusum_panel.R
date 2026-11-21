@@ -26,6 +26,16 @@ stopifnot(isTRUE(all.equal(unname(cusum_panel(uneven)), reference)),
           isTRUE(all.equal(cusum_panel(uneven + 1e12), cusum_panel(uneven))),
           isTRUE(all.equal(cusum_panel(-uneven), -cusum_panel(uneven))))
 
+# Scale the independent direct-means result, then change each row's units.
+row_scale <- c(2, 5)
+scaled_scores <- cusum_panel(uneven, scale = row_scale)
+unit_factor <- c(4, 0.5)
+stopifnot(isTRUE(all.equal(unname(scaled_scores),
+                          sweep(reference, 1, row_scale, "/"))),
+          isTRUE(all.equal(cusum_panel(sweep(uneven, 1, unit_factor, "*"),
+                                       scale = row_scale * unit_factor),
+                           scaled_scores)))
+
 # A single series / split still returns a matrix; more series than time points work.
 stopifnot(identical(dim(cusum_panel(matrix(c(1, 3), nrow = 1))), c(1L, 1L)),
           isTRUE(all.equal(as.numeric(cusum_panel(matrix(c(1, 3), 1))), -sqrt(2))))

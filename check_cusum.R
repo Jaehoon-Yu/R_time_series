@@ -15,7 +15,7 @@ print(scores)
 scale_panel <- rbind(c(0, 0, 4, 4), c(0, 0, 8, 8))
 print(cusum_panel(scale_panel, scale = c(2, 4)))
 # 가운데 점수는 각각 -4 / 2와 -8 / 4이므로 둘 다 -2임.
-# 나누는 값은 직접 정한 예시임. 아래 scan과 구간 나누기에는 아직 연결하지 않았음.
+# 나누는 값은 직접 정한 예시임. scan과 구간 나누기에도 scale로 넣을 수 있음.
 
 combined <- double_cusum(scores)
 print(combined)
@@ -41,8 +41,8 @@ print(double_cusum_decision(matrix(3, 2, 4), threshold = 0))
 # 값이 일정하면 점수가 0이라 FALSE가 나옴. NA는 선택한 위치가 없다는 뜻임.
 # 실제 자료에 맞는 기준값을 자동으로 구하는 기능은 아직 없음.
 
-# 올라갔다 내려오는 두 시계열에서 구간을 나누고 안쪽을 다시 검사함.
-two_changes <- rbind(c(0, 0, 4, 4, 0, 0), c(0, 0, 4, 4, 0, 0))
-print(double_cusum_segment(two_changes, threshold = 2))
-# 위치 2와 4가 나옴. 처음 고른 위치 2의 오른쪽을 다시 계산해 4를 찾음.
-# 기준값 2는 이 예제용임. 이 기본 분할만으로 논문 전체 방법이 완성된 것은 아님.
+# 행별 점수를 나누는 값을 모든 구간에 똑같이 전달함.
+two_changes <- rbind(c(0, 0, 4, 4, 10, 10), c(0, 0, 4, 4, 10, 10))
+print(double_cusum_segment(two_changes, threshold = 3, scale = c(2, 5)))
+# 위치 4만 나옴. 왼쪽 구간도 같은 값으로 나누면 점수가 3보다 작아 더 나누지 않음.
+# 기준값과 scale은 직접 정한 예시임. 이 값들을 자동으로 구하는 부분은 아직 없음.
