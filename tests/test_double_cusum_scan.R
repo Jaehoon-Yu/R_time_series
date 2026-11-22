@@ -60,16 +60,21 @@ one_row <- double_cusum_scan(matrix(c(100L, 0L, 4L, 100L), 1), 2L, 3L)
 stopifnot(isTRUE(all.equal(one_row$statistic, 2)),
           one_row$split == 2L, one_row$m == 1L)
 
-# Every valid interval of this panel gets its own direct-mean reference.
+# Every valid interval gets a direct-mean reference, with and without scaling.
 # The reference has local positions; scan must return original input positions.
-for (start in seq_len(ncol(mixed) - 1L)) {
-  for (end in seq.int(start + 1L, ncol(mixed))) {
-    reference <- reference_candidates(mixed[, start:end, drop = FALSE])
-    winner <- order(-reference$statistic, reference$split, reference$m)[1L]
-    actual <- double_cusum_scan(mixed, start, end)
-    stopifnot(isTRUE(all.equal(actual$statistic, reference$statistic[winner])),
-              actual$split == start + reference$split[winner] - 1L,
-              actual$m == reference$m[winner])
+for (row_scale in list(rep(1, nrow(mixed)), c(2, 5, 0.5))) {
+  for (start in seq_len(ncol(mixed) - 1L)) {
+    for (end in seq.int(start + 1L, ncol(mixed))) {
+      interval <- mixed[, start:end, drop = FALSE]
+      reference <- reference_candidates(interval, scale = row_scale)
+      actual_scores <- as.numeric(double_cusum(cusum_panel(interval, scale = row_scale)))
+      stopifnot(isTRUE(all.equal(actual_scores, reference$statistic)))
+      winner <- order(-reference$statistic, reference$split, reference$m)[1L]
+      actual <- double_cusum_scan(mixed, start, end, scale = row_scale)
+      stopifnot(isTRUE(all.equal(actual$statistic, reference$statistic[winner])),
+                actual$split == start + reference$split[winner] - 1L,
+                actual$m == reference$m[winner])
+    }
   }
 }
 
