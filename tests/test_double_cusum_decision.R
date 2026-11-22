@@ -37,24 +37,26 @@ stopifnot(interval$statistic == 4, isTRUE(interval$exceeds_threshold),
 # Exact equality is checked above with the hand-calculated score 4.
 mixed <- rbind(c(1, -2, 0, 5, 4, 7), c(3, 1, -1, 0, 2, 1),
                c(-4, -3, -5, -1, 1, 2))
-for (start in seq_len(ncol(mixed) - 1L)) {
-  for (end in seq.int(start + 1L, ncol(mixed))) {
-    reference <- reference_candidates(mixed[, start:end, drop = FALSE])
-    winner <- order(-reference$statistic, reference$split, reference$m)[1L]
-    score <- reference$statistic[winner]
-    stopifnot(score > 0)
-    for (accept in c(TRUE, FALSE)) {
-      cutoff <- if (accept) score / 2 else 2 * score
-      actual <- double_cusum_decision(mixed, cutoff, start, end)
-      stopifnot(isTRUE(all.equal(actual$statistic, score)),
-                identical(actual$threshold, cutoff),
-                identical(actual$exceeds_threshold, accept))
-      if (accept) {
-        stopifnot(actual$split == start + reference$split[winner] - 1L,
-                  actual$m == reference$m[winner])
-      } else {
-        stopifnot(identical(actual$split, NA_integer_),
-                  identical(actual$m, NA_integer_))
+for (row_scale in list(rep(1, nrow(mixed)), c(2, 5, 0.5))) {
+  for (start in seq_len(ncol(mixed) - 1L)) {
+    for (end in seq.int(start + 1L, ncol(mixed))) {
+      reference <- reference_candidates(mixed[, start:end, drop = FALSE], scale = row_scale)
+      winner <- order(-reference$statistic, reference$split, reference$m)[1L]
+      score <- reference$statistic[winner]
+      stopifnot(score > 0)
+      for (accept in c(TRUE, FALSE)) {
+        cutoff <- if (accept) score / 2 else 2 * score
+        actual <- double_cusum_decision(mixed, cutoff, start, end, scale = row_scale)
+        stopifnot(isTRUE(all.equal(actual$statistic, score)),
+                  identical(actual$threshold, cutoff),
+                  identical(actual$exceeds_threshold, accept))
+        if (accept) {
+          stopifnot(actual$split == start + reference$split[winner] - 1L,
+                    actual$m == reference$m[winner])
+        } else {
+          stopifnot(identical(actual$split, NA_integer_),
+                    identical(actual$m, NA_integer_))
+        }
       }
     }
   }
@@ -83,4 +85,4 @@ for (args in bad_calls) {
   }, error = function(e) TRUE)
   stopifnot(caught)
 }
-cat("All Double CUSUM decision tests passed (30 independent interval decisions).\n")
+cat("All Double CUSUM decision tests passed (60 independent interval decisions).\n")

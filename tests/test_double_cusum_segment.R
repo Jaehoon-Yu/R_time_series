@@ -7,7 +7,8 @@ source("tests/helpers/reference_candidates.R")
 
 # Independent control flow: a queue of intervals, with direct means for scores.
 # No production functions are called by this reference.
-reference_segments <- function(x, threshold, start = 1L, end = ncol(x)) {
+reference_segments <- function(x, threshold, start = 1L, end = ncol(x),
+                               scale = rep(1, nrow(x))) {
   pending <- list(c(start, end))
   next_interval <- 1L
   changes <- integer(0)
@@ -15,7 +16,8 @@ reference_segments <- function(x, threshold, start = 1L, end = ncol(x)) {
     bounds <- pending[[next_interval]]
     next_interval <- next_interval + 1L
     if (bounds[1L] >= bounds[2L]) next
-    candidates <- reference_candidates(x[, bounds[1L]:bounds[2L], drop = FALSE])
+    candidates <- reference_candidates(x[, bounds[1L]:bounds[2L], drop = FALSE],
+                                       scale = scale)
     winner <- order(-candidates$statistic, candidates$split, candidates$m)[1L]
     if (candidates$statistic[winner] > threshold) {
       split <- bounds[1L] + candidates$split[winner] - 1L
@@ -74,12 +76,14 @@ stopifnot(identical(double_cusum_segment(extended, 2, 2, 7), c(3L, 5L)))
 # Reuse the irregular panel from the decision checks, now checking the tree.
 mixed <- rbind(c(1, -2, 0, 5, 4, 7), c(3, 1, -1, 0, 2, 1),
                c(-4, -3, -5, -1, 1, 2))
-for (start in seq_len(ncol(mixed) - 1L)) {
-  for (end in seq.int(start + 1L, ncol(mixed))) {
-    for (cutoff in c(0.75, 2.5, 20)) {
-      expected <- reference_segments(mixed, cutoff, start, end)
-      actual <- double_cusum_segment(mixed, cutoff, start, end)
-      stopifnot(identical(actual, expected))
+for (row_scale in list(rep(1, nrow(mixed)), c(2, 5, 0.5))) {
+  for (start in seq_len(ncol(mixed) - 1L)) {
+    for (end in seq.int(start + 1L, ncol(mixed))) {
+      for (cutoff in c(0.75, 2.5, 20)) {
+        expected <- reference_segments(mixed, cutoff, start, end, scale = row_scale)
+        actual <- double_cusum_segment(mixed, cutoff, start, end, scale = row_scale)
+        stopifnot(identical(actual, expected))
+      }
     }
   }
 }
@@ -97,4 +101,4 @@ for (args in bad_calls) {
                     error = function(e) TRUE)
   stopifnot(caught)
 }
-cat("double_cusum_segment checks passed (45 independent interval comparisons)\n")
+cat("double_cusum_segment checks passed (90 independent interval comparisons)\n")
