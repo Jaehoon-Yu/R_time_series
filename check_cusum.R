@@ -1,5 +1,6 @@
 source("R/cusum_panel.R")
 source("R/estimate_residual_scale.R")
+source("R/center_by_segments.R")
 source("R/double_cusum.R")
 source("R/double_cusum_scan.R")
 source("R/double_cusum_decision.R")
@@ -12,14 +13,15 @@ print(scores)
 # 첫 행의 두 번째 위치는 sqrt(2 * 2 / 4) * (0 - 4) = -4임.
 # 둘째 행은 어느 위치에서 나눠도 평균 차이가 없어 모두 0임.
 
-# 예제로 만든 자료라서 구간별 평균을 알고 있음. 평균을 빼고 남은 흔들림을 씀.
+# 변화 위치 2를 직접 넣고 각 구간의 평균을 빼서 남은 흔들림을 구함.
 known_means <- rbind(c(0, 0, 4, 4), c(0, 0, 8, 8))
 scale_panel <- known_means + rbind(c(-1, 1, -1, 1), c(-2, 2, -2, 2))
-row_scale <- estimate_residual_scale(scale_panel - known_means)
+residuals <- center_by_segments(scale_panel, change_points = 2)
+row_scale <- estimate_residual_scale(residuals)
 print(row_scale)
 print(cusum_panel(scale_panel, scale = row_scale))
 # 나누는 값은 1.4826과 2.9652가 나옴. 크기를 맞춘 두 행의 점수는 같음.
-# 실제 자료의 변화 위치와 구간 평균을 자동으로 구하는 과정은 아직 연결하지 않았음.
+# 평균은 넣은 구간마다 계산함. 실제 자료의 변화 위치를 자동으로 고르는 과정은 아직 연결하지 않았음.
 
 combined <- double_cusum(scores)
 print(combined)
