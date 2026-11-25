@@ -1,4 +1,5 @@
 source("R/cusum_panel.R")
+source("R/estimate_residual_scale.R")
 source("R/double_cusum.R")
 source("R/double_cusum_scan.R")
 source("R/double_cusum_decision.R")
@@ -11,11 +12,14 @@ print(scores)
 # 첫 행의 두 번째 위치는 sqrt(2 * 2 / 4) * (0 - 4) = -4임.
 # 둘째 행은 어느 위치에서 나눠도 평균 차이가 없어 모두 0임.
 
-# 둘째 행의 값과 나누는 값을 함께 두 배로 하면 두 행의 점수가 같아짐.
-scale_panel <- rbind(c(0, 0, 4, 4), c(0, 0, 8, 8))
-print(cusum_panel(scale_panel, scale = c(2, 4)))
-# 가운데 점수는 각각 -4 / 2와 -8 / 4이므로 둘 다 -2임.
-# 나누는 값은 직접 정한 예시임. scan과 구간 나누기에도 scale로 넣을 수 있음.
+# 예제로 만든 자료라서 구간별 평균을 알고 있음. 평균을 빼고 남은 흔들림을 씀.
+known_means <- rbind(c(0, 0, 4, 4), c(0, 0, 8, 8))
+scale_panel <- known_means + rbind(c(-1, 1, -1, 1), c(-2, 2, -2, 2))
+row_scale <- estimate_residual_scale(scale_panel - known_means)
+print(row_scale)
+print(cusum_panel(scale_panel, scale = row_scale))
+# 나누는 값은 1.4826과 2.9652가 나옴. 크기를 맞춘 두 행의 점수는 같음.
+# 실제 자료의 변화 위치와 구간 평균을 자동으로 구하는 과정은 아직 연결하지 않았음.
 
 combined <- double_cusum(scores)
 print(combined)
