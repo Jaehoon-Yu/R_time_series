@@ -52,3 +52,8 @@ two_changes <- rbind(c(0, 0, 4, 4, 10, 10), c(0, 0, 4, 4, 10, 10))
 print(double_cusum_segment(two_changes, threshold = 3, scale = c(2, 5)))
 # 위치 4만 나옴. 왼쪽 구간도 같은 값으로 나누면 점수가 3보다 작아 더 나누지 않음.
 # 기준값과 scale은 직접 정한 예시임. 이 값들을 자동으로 구하는 부분은 아직 없음.
+
+# trim = 1은 구간 양끝에서 후보를 하나씩 제외함. 자료 자체는 그대로 씀.
+edge_panel <- rbind(c(10, 0, 0, 0, 0, 0), c(10, 0, 0, 0, 0, 0))
+print(double_cusum_scan(edge_panel, trim = 1))
+# 첫 번째 후보를 제외하여 위치 2가 나옴. 첫 값 10은 평균 계산에 계속 들어감.

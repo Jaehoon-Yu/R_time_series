@@ -5,14 +5,15 @@
 # m은 묶은 점수 개수이며, 실제로 변화한 시계열 개수를 뜻하지 않음.
 # 이 함수는 한 구간만 판단함. 반복해서 나누는 부분은 double_cusum_segment에 있음.
 double_cusum_decision <- function(x, threshold, start = 1L, end = ncol(x),
-                                  scale = rep(1, nrow(x))) {
+                                  scale = rep(1, nrow(x)), trim = 0L) {
   if (!is.numeric(threshold) || is.complex(threshold) ||
       length(threshold) != 1L || !is.null(dim(threshold)) ||
       !is.finite(threshold) || threshold < 0) {
     stop("threshold must be one finite non-negative real number.")
   }
   threshold <- as.double(threshold)
-  candidate <- double_cusum_scan(x, start = start, end = end, scale = scale)
+  candidate <- double_cusum_scan(x, start = start, end = end,
+                                 scale = scale, trim = trim)
   exceeds_threshold <- candidate$statistic > threshold
   list(statistic = candidate$statistic,
        threshold = threshold,

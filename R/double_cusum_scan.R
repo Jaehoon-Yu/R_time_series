@@ -6,8 +6,12 @@
 # 점수가 정확히 같으면 앞쪽 split, 그 안에서는 작은 m을 고름.
 # 점수가 모두 0이어도 후보는 나옴. 실제 변화 여부를 판단하는 함수는 아님.
 # scale은 행 순서대로 넣는 양수이며, 생략하면 각 행에 1을 씀.
+# trim은 구간의 양끝에서 제외할 후보 개수임. 자료 자체는 빼지 않음.
+# hdbinseg 1.0.3 dcbs.branch의 후보 범위를 따름. 0은 기존 동작을 유지하는 기본값임.
+# https://github.com/cran/hdbinseg/blob/1.0.3/R/dcbs.R#L185-L195
+# 동점도 남은 후보 안에서만 고름. 남은 후보가 없는 입력 구간은 오류로 알림.
 double_cusum_scan <- function(x, start = 1L, end = ncol(x),
-                              scale = rep(1, nrow(x))) {
+                              scale = rep(1, nrow(x)), trim = 0L) {
   if (!is.matrix(x) || !(is.double(x) || is.integer(x)) ||
       nrow(x) < 1L || ncol(x) < 2L || any(!is.finite(x))) {
     stop("x must be a finite real numeric matrix: rows are series, columns are times.")
@@ -22,13 +26,22 @@ double_cusum_scan <- function(x, start = 1L, end = ncol(x),
   }
   start <- as.integer(start)
   end <- as.integer(end)
+  if (!valid_bound(trim) || !is.null(dim(trim)) || trim < 0) {
+    stop("trim must be one finite non-negative integer value.")
+  }
+  if (trim > floor((end - start - 1L) / 2)) {
+    stop("The interval must contain at least 2 * trim + 2 observations.")
+  }
+  trim <- as.integer(trim)
   # 구간 안에서 평균과 점수를 다시 계산함. 한 행이어도 행렬 모양을 유지함.
   segment <- x[, seq.int(start, end), drop = FALSE]
   combined <- double_cusum(cusum_panel(segment, scale = scale))
+  candidates <- seq.int(trim + 1L, ncol(segment) - trim - 1L)
+  combined <- combined[, candidates, drop = FALSE]
   # R은 행렬을 첫 열부터 읽으므로 같은 최고 점수에서 위 순서가 적용됨.
   best <- which.max(combined)
   position <- arrayInd(best, dim(combined))
   list(statistic = unname(combined[best]),
-       split = start + position[1L, 2L] - 1L,
+       split = start + candidates[position[1L, 2L]] - 1L,
        m = position[1L, 1L])
 }
